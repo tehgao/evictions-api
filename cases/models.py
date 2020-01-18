@@ -1,4 +1,6 @@
 from django.db import models
+from datetime import datetime as dt
+import pytz
 
 
 class Address(models.Model):
@@ -31,7 +33,7 @@ class Attorney(models.Model):
 
 
 class Case(models.Model):
-    case_number = models.CharField(max_length=255)
+    case_number = models.CharField(max_length=255, unique=True)
     file_date = models.DateField()
     plaintiffs = models.ManyToManyField(Party, related_name='case_plaintiffs')
     defendants = models.ManyToManyField(Party, related_name='case_defendants')
@@ -40,6 +42,18 @@ class Case(models.Model):
 
     def __str__(self):
         return self.case_number
+
+
+class EventManager(models.Manager):
+    def create_event(self, event_type, date, time, is_pro_se, assoc_case_id):
+        et = 'FC'
+        if "SECOND CAUSE" in event_type:
+            et = 'SC'
+
+        date_time = pytz.timezone(
+            'US/Eastern').localize(dt.strptime(date + " " + time, '%m/%d/%Y %H:%M'))
+
+        return self.create(event_type=et, is_pro_se=bool(is_pro_se), date_time=date_time, assoc_case_id=assoc_case_id)
 
 
 class Event(models.Model):
@@ -52,6 +66,8 @@ class Event(models.Model):
     date_time = models.DateTimeField()
 
     assoc_case = models.ForeignKey(Case, on_delete=models.CASCADE)
+
+    objects = EventManager()
 
     def __str__(self):
         return self.event_type

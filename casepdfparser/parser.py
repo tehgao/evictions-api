@@ -16,9 +16,9 @@ def get_addresses(section_list):
     return partitioned_list(section_list, split_points)[:-1]
 
 
-def process_parties(plaintiff_list):
+def process_parties(party_list):
     plaintiffs = []
-    for p in plaintiff_list:
+    for p in party_list:
         plaintiff = list(p)
         plaintiff_name = plaintiff.pop(0)
         finds = [(idx, line) for (idx, line) in enumerate(
@@ -27,27 +27,30 @@ def process_parties(plaintiff_list):
             plaintiff_addr = plaintiff
             plaintiff_addr.pop(finds[0][0])
             plaintiffs.append(
-                {'name': plaintiff_name, 'address': plaintiff_addr, 'attorney': finds[0][1]})
+                {'name': plaintiff_name, 'address': process_address(plaintiff_addr), 'attorney': finds[0][1]})
         else:
             plaintiffs.append(
-                {'name': plaintiff_name, 'address': plaintiff})
+                {'name': plaintiff_name, 'address': process_address(plaintiff)})
 
     return plaintiffs
 
 
-def process_defendants(defendant_list):
-    defendants = []
-    for d in defendant_list:
-        defendant = list(d)
-        defendant_name = defendant.pop(0)
-        defendants.append({'name': defendant_name, 'address': defendant})
-
-    return defendants
+def process_address(address_raw_list):
+    address = []
+    for line in address_raw_list:
+        matches = re.match(
+            r'([\w ]+), ([A-Z]{2}) ([0-9]{5}(-[0-9]{4})?)', line)
+        if matches:
+            address.extend(
+                [matches.group(1), matches.group(2), matches.group(3)])
+        else:
+            address.append(line)
+    return address
 
 
 def process_events(event_list):
     if (len(event_list) - 1) % 3 != 0:
-        raise ValueError
+        raise ValueError(event_list)
 
     events = []
 
@@ -55,12 +58,12 @@ def process_events(event_list):
         3 * x + 1 for x in range(int((len(event_list) - 1) / 3))]
     event_triples = [(event_list[i:j]) for (i, j) in
                      zip(every_third, every_third[1:] + [None])]
-    for (case_type, date, time) in event_triples:
+    for (event_type, date, time) in event_triples:
         event = {
-            "case_type": case_type,
+            "event_type": event_type,
             "date": date,
             "time": time,
-            "is_pro_se": bool(re.search('PRO SE', case_type))
+            "is_pro_se": bool(re.search('PRO SE', event_type))
         }
 
         events.append(event)
@@ -120,7 +123,7 @@ def process_pdf_file(file_name):
 
 def main():
     pp = pprint.PrettyPrinter(indent=2)
-    pp.pprint(process_pdf_file('../junk/evictions.pdf'))
+    pp.pprint(process_pdf_file('junk/evictions.pdf'))
 
 
 if __name__ == "__main__":
