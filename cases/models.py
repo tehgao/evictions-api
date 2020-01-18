@@ -9,7 +9,8 @@ class Address(models.Model):
     zip = models.CharField(max_length=10)
 
     def __str__(self):
-        return '{} {}\n{}, {} {}'.format(self.street_address, self.street_address_2, self.city, self.state, self.zip)
+        return '{} {}\n{}, {} {}'.format(self.street_address, self.street_address_2,
+                                         self.city, self.state, self.zip)
 
 
 class Party(models.Model):

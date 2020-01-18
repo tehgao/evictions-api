@@ -18,7 +18,7 @@ from django.urls import path
 from django.contrib import admin
 from rest_framework import serializers, viewsets, routers
 
-from cases.models import *
+from cases.models import Address, Party, Case, Attorney, Event
 
 
 class AddressSerializer(serializers.ModelSerializer):
