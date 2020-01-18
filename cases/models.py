@@ -1,5 +1,4 @@
 from django.db import models
-from polymorphic.models import PolymorphicModel
 
 
 class Address(models.Model):
@@ -13,26 +12,18 @@ class Address(models.Model):
         return '{} {}\n{}, {} {}'.format(self.street_address, self.street_address_2, self.city, self.state, self.zip)
 
 
-class Party(PolymorphicModel):
+class Party(models.Model):
+    name = models.CharField(max_length=255)
     address = models.OneToOneField(
         Address, on_delete=models.CASCADE, blank=True, null=True)
 
-
-class Person(Party):
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
-    middle_initial = models.CharField(max_length=1, blank=True)
-
     def __str__(self):
-        return '{} {}'.format(self.first_name, self.last_name)
+        return self.name
 
 
-class Attorney(Person):
-    associated_party = models.ForeignKey(Party, on_delete=models.CASCADE)
-
-
-class Company(Party):
+class Attorney(models.Model):
     name = models.CharField(max_length=255)
+    associated_party = models.ForeignKey(Party, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name

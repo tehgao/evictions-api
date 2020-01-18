@@ -17,7 +17,6 @@ from django.conf.urls import url, include
 from django.urls import path
 from django.contrib import admin
 from rest_framework import serializers, viewsets, routers
-from rest_polymorphic.serializers import PolymorphicSerializer
 
 from cases.models import *
 
@@ -29,11 +28,9 @@ class AddressSerializer(serializers.ModelSerializer):
 
 
 class AttorneySerializer(serializers.ModelSerializer):
-    address = AddressSerializer
-
     class Meta:
         model = Attorney
-        fields = ('first_name', 'middle_initial', 'last_name')
+        fields = ('name', )
 
 
 class PartySerializer(serializers.ModelSerializer):
@@ -42,35 +39,7 @@ class PartySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Party
-        fields = ('address', 'attorney_set')
-
-
-class PersonSerializer(serializers.ModelSerializer):
-    address = AddressSerializer
-    attorney_set = AttorneySerializer(many=True)
-
-    class Meta:
-        model = Person
-        fields = ('first_name', 'middle_initial',
-                  'last_name', 'address', 'attorney_set')
-
-
-class CompanySerializer(serializers.ModelSerializer):
-    address = AddressSerializer
-    attorney_set = AttorneySerializer(many=True)
-
-    class Meta:
-        model = Company
         fields = ('name', 'address', 'attorney_set')
-
-
-class PartyPolymorphicSerializer(PolymorphicSerializer):
-    model_serializer_mapping = {
-        Party: PartySerializer,
-        Person: PersonSerializer,
-        Attorney: PersonSerializer,
-        Company: CompanySerializer,
-    }
 
 
 class EventSerializer(serializers.ModelSerializer):
@@ -80,9 +49,9 @@ class EventSerializer(serializers.ModelSerializer):
 
 
 class CaseSerializer(serializers.ModelSerializer):
-    plaintiffs = PartyPolymorphicSerializer(many=True)
-    defendants = PartyPolymorphicSerializer(many=True)
-    additional_parties = PartyPolymorphicSerializer(many=True)
+    plaintiffs = PartySerializer(many=True)
+    defendants = PartySerializer(many=True)
+    additional_parties = PartySerializer(many=True)
 
     events = EventSerializer
 
@@ -99,7 +68,7 @@ class CaseViewSet(viewsets.ModelViewSet):
 
 class PartyViewSet(viewsets.ModelViewSet):
     queryset = Party.objects.all()
-    serializer_class = PartyPolymorphicSerializer
+    serializer_class = PartySerializer
 
 
 router = routers.DefaultRouter()
