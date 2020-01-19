@@ -21,10 +21,10 @@ FILE_UPLOAD_TEMP_DIR = BASE_DIR + "/temp"
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'jfk63!f)q@b%7q!fewl4&n(389vnp*6(hk9!ek&16de66p4sd6'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG') == 'TRUE'
 
 ALLOWED_HOSTS = []
 
@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rest_polymorphic',
     'cases',
     'casepdfparser',
 ]
