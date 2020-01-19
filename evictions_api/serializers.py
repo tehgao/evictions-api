@@ -5,7 +5,7 @@ from cases.models import Address, Party, Case, Attorney, Event
 class AddressSerializer(serializers.ModelSerializer):
     class Meta:
         Model = Address
-        fields = '__all__'
+        fields = ('street_address', 'street_address_2', 'city', 'state', 'zip')
 
 
 class AttorneySerializer(serializers.ModelSerializer):
@@ -21,6 +21,7 @@ class PartySerializer(serializers.ModelSerializer):
     class Meta:
         model = Party
         fields = ('name', 'address', 'attorney_set')
+        depth = 3
 
 
 class EventSerializer(serializers.ModelSerializer):
@@ -34,9 +35,9 @@ class CaseSerializer(serializers.ModelSerializer):
     defendants = PartySerializer(many=True)
     additional_parties = PartySerializer(many=True)
 
-    events = EventSerializer
+    event_set = EventSerializer(many=True)
 
     class Meta:
         model = Case
         fields = '__all__'
-        depth = 4
+        depth = 3

@@ -20,6 +20,6 @@ class ViewTest(TestCase):
             client.force_login(user=user)
             payload = {'file': pdf}
             response = client.post(
-                '/upload/evictions.pdf', payload, format='multipart')
+                '/api/upload/evictions.pdf', payload, format='multipart')
 
             self.assertEqual(response.status_code, 201)

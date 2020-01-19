@@ -17,8 +17,8 @@ class Address(models.Model):
 
 class Party(models.Model):
     name = models.CharField(max_length=255)
-    address = models.OneToOneField(
-        Address, on_delete=models.CASCADE, blank=True, null=True)
+    address = models.ForeignKey(
+        Address, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name

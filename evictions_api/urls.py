@@ -28,8 +28,8 @@ router.register(r'cases', CaseViewSet)
 router.register(r'parties', PartyViewSet)
 
 urlpatterns = [
-    url(r'^', include(router.urls)),
+    url(r'^api/', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^upload/(?P<filename>[^/]+)$', PdfUploadView.as_view()),
+    url(r'^api/upload/(?P<filename>[^/]+)$', PdfUploadView.as_view()),
     path('admin/', admin.site.urls),
 ]
