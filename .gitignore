@@ -131,4 +131,8 @@ dmypy.json
 # stuff
 junk/*
 
+# for directories that are usually empty that we want to keep around
 !.keepthis
+
+# prevent storage of potential PII data
+.pdf
