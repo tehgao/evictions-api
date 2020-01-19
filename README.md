@@ -3,6 +3,7 @@
 The Evictions API is a simple web application that faciliates tracking of evictions cases.
 
 ## Usage
+Before starting the application set your SECRET_KEY environment variable to something nice and high entropy. You can use something like [djecrety](https://djecrety.ir/) to get one.
 
 ```bash
 pip install -e .
