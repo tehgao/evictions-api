@@ -19,56 +19,8 @@ from django.contrib import admin
 from rest_framework import serializers, viewsets, routers
 
 from cases.models import Address, Party, Case, Attorney, Event
-
-
-class AddressSerializer(serializers.ModelSerializer):
-    class Meta:
-        Model = Address
-        fields = '__all__'
-
-
-class AttorneySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Attorney
-        fields = ('name', )
-
-
-class PartySerializer(serializers.ModelSerializer):
-    attorney_set = AttorneySerializer(many=True)
-    address = AddressSerializer
-
-    class Meta:
-        model = Party
-        fields = ('name', 'address', 'attorney_set')
-
-
-class EventSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Event
-        fields = '__all__'
-
-
-class CaseSerializer(serializers.ModelSerializer):
-    plaintiffs = PartySerializer(many=True)
-    defendants = PartySerializer(many=True)
-    additional_parties = PartySerializer(many=True)
-
-    events = EventSerializer
-
-    class Meta:
-        model = Case
-        fields = '__all__'
-        depth = 4
-
-
-class CaseViewSet(viewsets.ModelViewSet):
-    queryset = Case.objects.all()
-    serializer_class = CaseSerializer
-
-
-class PartyViewSet(viewsets.ModelViewSet):
-    queryset = Party.objects.all()
-    serializer_class = PartySerializer
+from evictions_api.views import CaseViewSet, PartyViewSet, PdfUploadView
+from evictions_api.serializers import AddressSerializer, AttorneySerializer, PartySerializer, EventSerializer, CaseSerializer
 
 
 router = routers.DefaultRouter()
@@ -78,5 +30,6 @@ router.register(r'parties', PartyViewSet)
 urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^upload/(?P<filename>[^/]+)$', PdfUploadView.as_view()),
     path('admin/', admin.site.urls),
 ]

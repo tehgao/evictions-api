@@ -32,7 +32,8 @@ class LoaderTest(TestCase):
         self.assertEqual(len(Case.objects.all()), 1)
 
     def test_loader_pdf(self):
-        pdf_location = os.path.join(settings.BASE_DIR, 'junk/evictions.pdf')
+        pdf_location = os.path.join(
+            settings.BASE_DIR, 'test_data/evictions.pdf')
         loader.load_pdf(pdf_location)
 
         self.assertEqual(len(Case.objects.all()), 94)

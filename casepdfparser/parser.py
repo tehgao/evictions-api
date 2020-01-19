@@ -2,8 +2,6 @@ from pdfmajor.interpreter import PDFInterpreter, LTTextBlock
 import re
 import pprint
 
-pages = []
-
 
 def partitioned_list(part_list, partitions):
     return [part_list[i:j]
@@ -104,8 +102,9 @@ def process_all_lines(all_lines):
     return process_cases(partitioned_list(all_lines, start_indices))
 
 
-def process_pdf_file(file_name):
-    for page in PDFInterpreter(file_name):
+def process_pages(pages_list):
+    pages = []
+    for page in pages_list:
         page_lines = []
         for item in page:
             if isinstance(item, LTTextBlock):
@@ -119,12 +118,3 @@ def process_pdf_file(file_name):
         pages.append(page_lines[end_of_header[0] + 1:])
 
     return process_all_lines([line for page in pages for line in page][:-1])
-
-
-def main():
-    pp = pprint.PrettyPrinter(indent=2)
-    pp.pprint(process_pdf_file('junk/evictions.pdf'))
-
-
-if __name__ == "__main__":
-    main()
