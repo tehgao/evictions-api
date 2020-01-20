@@ -9,4 +9,5 @@ setup(name='evictions_api',
           'django',
           'djangorestframework',
           'pdfmajor',
+          'faker'
       ])

@@ -1,14 +1,15 @@
 from rest_framework import viewsets
-from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.parsers import FileUploadParser
-from rest_framework.permissions import BasePermission, IsAuthenticated
-from cases.models import Party, Case
-from casepdfparser import loader, reader
-from evictions_api.serializers import CaseSerializer, PartySerializer
-from django.conf import settings
+from rest_framework.views import APIView
 
-import tempfile
+from casepdfparser import loader
+from cases.models import Case, Party
+from cases.utils import FakeLoader
+from evictions_api.serializers import CaseSerializer, PartySerializer
+
+from django.http import HttpResponse
+from django.views.generic import ListView
 
 
 class CaseViewSet(viewsets.ModelViewSet):
@@ -29,3 +30,21 @@ class PdfUploadView(APIView):
         loader.load_pages(file_obj)
 
         return Response(status=201)
+
+
+class GenerateTestDataView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        fakeloader = FakeLoader()
+
+        generated = fakeloader.generate_mock_cases(
+            int(request.POST.get('num')))
+
+        return Response(status=201, data=[CaseSerializer(case).data for case in generated])
+
+
+class CaseListView(ListView):
+    template_name = 'case-list.html'
+    queryset = Case.objects.all()
+    context_object_name = 'cases'

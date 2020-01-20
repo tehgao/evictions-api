@@ -19,7 +19,7 @@ from django.contrib import admin
 from rest_framework import serializers, viewsets, routers
 
 from cases.models import Address, Party, Case, Attorney, Event
-from evictions_api.views import CaseViewSet, PartyViewSet, PdfUploadView
+from evictions_api.views import CaseViewSet, PartyViewSet, PdfUploadView, GenerateTestDataView, CaseListView
 from evictions_api.serializers import AddressSerializer, AttorneySerializer, PartySerializer, EventSerializer, CaseSerializer
 
 
@@ -31,5 +31,8 @@ urlpatterns = [
     url(r'^api/', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/upload/(?P<filename>[^/]+)$', PdfUploadView.as_view()),
+    url(r'^api/generate',
+        GenerateTestDataView.as_view()),
+    path('', CaseListView.as_view()),
     path('admin/', admin.site.urls),
 ]
