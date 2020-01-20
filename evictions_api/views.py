@@ -8,6 +8,9 @@ from cases.models import Case, Party
 from cases.utils import FakeLoader
 from evictions_api.serializers import CaseSerializer, PartySerializer
 
+from django.http import HttpResponse
+from django.views.generic import ListView
+
 
 class CaseViewSet(viewsets.ModelViewSet):
     queryset = Case.objects.all()
@@ -39,3 +42,9 @@ class GenerateTestDataView(APIView):
             int(request.POST.get('num')))
 
         return Response(status=201, data=[CaseSerializer(case).data for case in generated])
+
+
+class CaseListView(ListView):
+    template_name = 'case-list.html'
+    queryset = Case.objects.all()
+    context_object_name = 'cases'
