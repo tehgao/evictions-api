@@ -28,6 +28,7 @@ DEBUG = os.environ.get('DJANGO_DEBUG') == 'TRUE'
 
 ALLOWED_HOSTS = []
 
+TIME_ZONE = 'US/Eastern'
 
 # Application definition
 
