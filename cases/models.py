@@ -53,7 +53,8 @@ class EventManager(models.Manager):
         date_time = pytz.timezone(
             'US/Eastern').localize(dt.strptime(date + " " + time, '%m/%d/%Y %H:%M'))
 
-        return self.create(event_type=et, is_pro_se=bool(is_pro_se), date_time=date_time, assoc_case_id=assoc_case_id)
+        return self.create(event_type=et, is_pro_se=bool(is_pro_se),
+                           date_time=date_time, assoc_case_id=assoc_case_id)
 
 
 class Event(models.Model):
